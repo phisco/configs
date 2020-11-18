@@ -8,10 +8,15 @@ ZSH_THEME="bira"
 
 #COMPLETION_WAITING_DOTS="true"
 HIST_STAMPS="mm/dd/yyyy"
-export ZSH_TMUX_AUTOSTART=true
+if [[ -z $ZSH_TMUX_AUTOSTART_OVERRIDE ]]
+then
+  export ZSH_TMUX_AUTOSTART=true
+fi
 
 plugins=(
+  asdf
   common-aliases
+  command-not-found
   copyfile
   docker
   #encode64
@@ -31,10 +36,15 @@ plugins=(
   web-search
   zsh-completions
   zsh-syntax-highlighting
-  zsh-autosuggestions
 )
 
 source $ZSH/oh-my-zsh.sh
+if type brew &>/dev/null; then
+  FPATH=$(brew --prefix)/share/zsh/site-functions:$FPATH
+
+  autoload -Uz compinit
+    rm -f ~/.zcompdump; compinit
+fi
 
 pasteinit() {
   OLD_SELF_INSERT=${${(s.:.)widgets[self-insert]}[2,3]}

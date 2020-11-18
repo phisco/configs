@@ -5,7 +5,7 @@ export PATH=$HOME/.local/bin:$HOME/go/bin:$PATH
 export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 export PATH=$PATH:/snap/bin
 #export PATH=$PATH:`gem environment gempath`
-export PATH=$PATH:$HOME/.node_modules/bin/*
+export PATH=$PATH:$HOME/.node_modules/bin
 export PATH=$PATH:/home/linuxbrew/.linuxbrew/bin
 #export PATH=$PATH:`stack path`
 export HOMESHICK_DIR=/usr/local/opt/homeshick
@@ -85,3 +85,9 @@ users:
     token: ${token}
 "
 }
+
+export PATH="$HOME/.cargo/bin:$PATH"
+
+source $HOME/.cargo/env
+
+export FLUX_FORWARD_NAMESPACE=flux

@@ -109,14 +109,18 @@ call plug#begin()
 "Plug 'vim-syntastic/syntastic'
 "Plug 'zchee/deoplete-go', { 'do': 'make'}
 "let g:deoplete#enable_at_startup = 1
+Plug 'junegunn/gv.vim'
 Plug 'autozimu/LanguageClient-neovim', {
     \ 'branch': 'next',
     \ 'do': './install.sh'
     \ }
+Plug 'danilamihailov/beacon.nvim'
 Plug 'Chiel92/vim-autoformat'
 Plug 'NLKNguyen/papercolor-theme'
 Plug 'Raimondi/delimitMate'
 Plug 'Xuyuanp/nerdtree-git-plugin'
+Plug 'terryma/vim-multiple-cursors'
+Plug 'tc50cal/vim-terminal'
 Plug 'airblade/vim-gitgutter'
 Plug 'benmills/vimux'
 Plug 'christianrondeau/vim-base64'
@@ -203,7 +207,7 @@ let g:go_highlight_functions = 1
 let g:go_highlight_function_calls = 1
 let g:go_highlight_extra_types = 1
 let g:go_highlight_generate_tags = 1
-command! -bang -nargs=* Ag call fzf#vim#ag(<q-args>, {'options': '--delimiter : --nth 4..'}, <bang>0)
+"command! -bang -nargs=* Ag call fzf#vim#ag(<q-args>, {'options': '--delimiter : --nth 4..'}, <bang>0)
 au BufNewFile,BufRead Jenkinsfile setf groovy
 
 
@@ -296,3 +300,6 @@ let g:formatters_rego = ['rego']
 let g:autoformat_autoindent = 0
 let g:autoformat_retab = 0
 au BufWritePre *.rego Autoformat
+
+""" https://github.com/DanilaMihailov/beacon.nvim
+"let g:beacon_size = 80
