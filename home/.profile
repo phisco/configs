@@ -86,8 +86,41 @@ users:
 "
 }
 
-export PATH="$HOME/.cargo/bin:$PATH"
+#export PATH="$HOME/.cargo/bin:$PATH"
 
-source $HOME/.cargo/env
+#source $HOME/.cargo/env
 
 export FLUX_FORWARD_NAMESPACE=flux
+
+
+# Homebrew settings
+export PATH="/usr/local/opt/openssl/bin:$PATH"
+export PATH="/usr/local/opt/gettext/bin:$PATH"
+export PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH"
+export PATH="/usr/local/opt/findutils/libexec/gnubin:$PATH"
+export PATH="/usr/local/opt/gnu-getopt/bin:$PATH"
+export PATH="/usr/local/opt/gnu-sed/libexec/gnubin:$PATH"
+export PATH="/usr/local/opt/gnu-tar/libexec/gnubin:$PATH"
+
+export MANPATH="/usr/local/opt/coreutils/libexec/gnuman:$MANPATH"
+export MANPATH="/usr/local/opt/findutils/libexec/gnuman:$MANPATH"
+export MANPATH="/usr/local/opt/gnu-getopt/share/man:$MANPATH"
+export MANPATH="/usr/local/opt/gnu-sed/libexec/gnuman:$MANPATH"
+export MANPATH="/usr/local/opt/gnu-tar/libexec/gnuman:$MANPATH"
+
+export LDFLAGS="-L/usr/local/opt/openssl/lib $LDFLAGS"
+export LDFLAGS="-L/usr/local/opt/zlib/lib $LDFLAGS"
+export LDFLAGS="-L/usr/local/opt/gettext/lib $LDFLAGS"
+export LDFLAGS="-L/usr/local/opt/readline/lib $LDFLAGS"
+
+export CPPFLAGS="-I/usr/local/opt/openssl/include $CPPFLAGS"
+export CPPFLAGS="-I/usr/local/opt/zlib/include $CPPFLAGS"
+export CPPFLAGS="-I/usr/local/opt/gettext/include $CPPFLAGS"
+export CPPFLAGS="-I/usr/local/opt/readline/include $CPPFLAGS"
+
+export PKG_CONFIG_PATH="/usr/local/opt/readline/lib/pkgconfig"
+
+# GPGv2 backward compatibility
+export GPG_AGENT_INFO=~/.gnupg/S.gpg-agent::1
+export GPG_TTY=$(tty)
+
