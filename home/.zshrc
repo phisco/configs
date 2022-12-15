@@ -34,8 +34,8 @@ plugins=(
   vi-mode
   vscode
   web-search
-  zsh-completions
-  zsh-syntax-highlighting
+  keychain
+  gpg-agent
 )
 
 source $ZSH/oh-my-zsh.sh

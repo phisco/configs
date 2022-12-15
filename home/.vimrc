@@ -303,3 +303,8 @@ au BufWritePre *.rego Autoformat
 
 """ https://github.com/DanilaMihailov/beacon.nvim
 "let g:beacon_size = 80
+
+""" https://github.com/Yggdroot/indentLine
+""" disable conceal for yaml and json to have double quotes back.
+let g:vim_json_conceal=0
+let g:markdown_syntax_conceal=0
