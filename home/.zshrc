@@ -36,6 +36,7 @@ plugins=(
   web-search
   keychain
   gpg-agent
+  brew
 )
 
 source $ZSH/oh-my-zsh.sh

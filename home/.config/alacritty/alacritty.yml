@@ -1,6 +1,3 @@
-#Needed to have @~ and all characters working on italian keyboards
-alt_send_esc: false
-
 # Configuration for Alacritty, the GPU enhanced terminal emulator
 #import:
   #- ~/.alacritty-colorscheme/themes/smoooooth.yml
