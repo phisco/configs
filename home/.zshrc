@@ -93,3 +93,4 @@ export PATH="/usr/local/sbin:$PATH"
 autoload -U edit-command-line
 zle -N edit-command-line
 bindkey -M vicmd v edit-command-line
+export PATH="$PATH:/Users/phisco/.local/bin"
