@@ -1,0 +1,93 @@
+[[ ! -f ~/.profile ]] || source ~/.profile
+
+autoload -U edit-command-line
+zle -N edit-command-line
+bindkey -M vicmd v edit-command-line
+bindkey "^?" backward-delete-char # Fix the back delete issue: https://github.com/spaceship-prompt/spaceship-prompt/issues/91#issuecomment-327996599
+export PATH="$PATH:/Users/phisco/.local/bin"
+
+### Added by Zinit's installer
+if [[ ! -f $HOME/.local/share/zinit/zinit.git/zinit.zsh ]]; then
+    print -P "%F{33} %F{220}Installing %F{33}ZDHARMA-CONTINUUM%F{220} Initiative Plugin Manager (%F{33}zdharma-continuum/zinit%F{220})…%f"
+    command mkdir -p "$HOME/.local/share/zinit" && command chmod g-rwX "$HOME/.local/share/zinit"
+    command git clone https://github.com/zdharma-continuum/zinit "$HOME/.local/share/zinit/zinit.git" && \
+        print -P "%F{33} %F{34}Installation successful.%f%b" || \
+        print -P "%F{160} The clone has failed.%f%b"
+fi
+
+source "$HOME/.local/share/zinit/zinit.git/zinit.zsh"
+autoload -Uz _zinit
+(( ${+_comps} )) && _comps[zinit]=_zinit
+
+# zinit light zsh-users/zsh-syntax-highlighting
+zinit light zsh-users/zsh-completions
+# zinit light zsh-users/zsh-autosuggestions
+#
+zinit ice atinit"
+        ZSH_TMUX_FIXTERM=true;
+        ZSH_TMUX_AUTOSTART=true;
+        ZSH_TMUX_AUTOCONNECT=true;"
+zinit snippet OMZP::tmux
+
+zinit pack for ls_colors
+
+zinit snippet OMZP::common-aliases
+zinit snippet OMZP::command-not-found
+zinit snippet OMZP::copyfile
+zinit snippet OMZP::git
+zinit snippet OMZP::golang
+zinit snippet OMZP::kubectl
+zinit snippet OMZP::sudo
+zinit snippet OMZP::vscode
+zinit snippet OMZP::brew
+
+autoload -Uz compinit && compinit
+zinit cdreplay -q
+
+if [[ -f "/opt/homebrew/bin/brew" ]] then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
+
+
+eval "$(zoxide init --cmd cd zsh)"
+
+ # History
+HIST_STAMPS="yyyy/mm/dd"
+HISTSIZE=5000
+HISTFILE=~/.zsh_history
+SAVEHIST=$HISTSIZE
+HISTDUP=erase
+setopt prompt_subst
+setopt appendhistory
+setopt sharehistory
+setopt hist_ignore_space
+setopt hist_ignore_all_dups
+setopt hist_save_no_dups
+setopt hist_ignore_dups
+setopt hist_find_no_dups
+
+# to make cd also see .hidden directories/files
+setopt globdots
+
+function powerline_precmd() {
+  PS1="$($GOPATH/bin/powerline-go -error $? -shell zsh -newline -jobs ${${(%):%j}:-0} -modules kube,cwd,git,jobs,exit)"
+}
+
+
+function install_powerline_precmd() {
+  for s in "${precmd_functions[@]}"; do
+    if [ "$s" = "powerline_precmd" ]; then
+      return
+    fi
+  done
+  precmd_functions+=(powerline_precmd)
+}
+
+install_powerline_precmd
+
+[[ ! -f ~/.fzf.zsh ]] || source ~/.fzf.zsh
+
+export FZF_CTRL_T_OPTS="
+  --walker-skip .git,node_modules,target
+  --preview 'bat -n --color=always {}'
+  --bind 'ctrl-/:change-preview-window(down|hidden|)'"

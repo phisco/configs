@@ -2,10 +2,10 @@ set nocompatible
 filetype on
 filetype plugin indent on
 let mapleader = ','
-map <leader>Q :q! <return>
-map <leader>W :w !SUDO_ASKPASS=/usr/lib/ssh/x11-ssh-askpass sudo -A tee % > /dev/null<return>
-map <leader>q :q <return>
-map <leader>w :w <return>
+map <leader>Q :q!<CR>
+map <leader>W :wa<CR>
+map <leader>q :wq<CR>
+map <leader>w :w<CR>
 nnoremap <C-H> <C-W><C-H>
 nnoremap <C-J> <C-W><C-J>
 nnoremap <C-K> <C-W><C-K>

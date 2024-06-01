@@ -1,4 +1,3 @@
-
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 export PATH=$HOME/.local/bin:$HOME/go/bin:$PATH
@@ -21,11 +20,13 @@ alias takeover="tmux detach -a"
 
 export GO111MODULE=on
 export npm_config_prefix=$HOME/.node_modules
-alias "sudo"="sudo "
 
-alias "wa"="watch -n 1 -d "
-alias "v"="nvim"
-alias "vim"="nvim"
+alias sudo="sudo "
+alias wa="watch -n 1 -d "
+alias v="nvim"
+alias vim="nvim"
+alias ls='ls -A --color '
+alias c='clear'
 
 alias lg='lazygit'
 alias lzd='lazydocker'
