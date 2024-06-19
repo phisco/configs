@@ -24,15 +24,14 @@ export npm_config_prefix=$HOME/.node_modules
 alias sudo="sudo "
 alias wa="watch -n 1 -d "
 alias v="nvim"
+alias vimdiff="nvim -d"
 alias vim="nvim"
 alias ls='ls -A --color '
 alias c='clear'
 
 alias lg='lazygit'
 alias lzd='lazydocker'
-alias dsp='docker system prune -a'
-
-git config --global alias.logtree 'log --graph --all --oneline'
+alias dsp='docker system prune -a --group-directories-first'
 
 source "$HOMESHICK_DIR/homeshick.sh"
 
@@ -63,3 +62,4 @@ export GPG_AGENT_INFO=~/.gnupg/S.gpg-agent::1
 export GPG_TTY=$(tty)
 
 alias "rm"="rm -i"
+

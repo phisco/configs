@@ -23,13 +23,11 @@ autoload -Uz _zinit
 zinit light zsh-users/zsh-completions
 # zinit light zsh-users/zsh-autosuggestions
 #
-zinit ice atinit"
-        ZSH_TMUX_FIXTERM=true;
-        ZSH_TMUX_AUTOSTART=true;
-        ZSH_TMUX_AUTOCONNECT=true;"
-zinit snippet OMZP::tmux
-
-zinit pack for ls_colors
+# zinit ice atinit"
+#         ZSH_TMUX_FIXTERM=true;
+#         ZSH_TMUX_AUTOSTART=true;
+#         ZSH_TMUX_AUTOCONNECT=true;"
+# zinit snippet OMZP::tmux
 
 zinit snippet OMZP::common-aliases
 zinit snippet OMZP::command-not-found
@@ -40,6 +38,16 @@ zinit snippet OMZP::kubectl
 zinit snippet OMZP::sudo
 zinit snippet OMZP::vscode
 zinit snippet OMZP::brew
+zinit lucid for \
+    atinit"
+        export ZSH_TMUX_FIXTERM=false
+        export ZSH_TMUX_AUTOSTART=true
+        export ZSH_TMUX_AUTOCONNECT=true
+        export ZSH_TMUX_DEFAULT_SESSION_NAME='</>'
+    " \
+    OMZP::tmux \
+    atinit"HIST_STAMPS=dd.mm.yyyy" \
+    OMZL::history.zsh \
 
 autoload -Uz compinit && compinit
 zinit cdreplay -q
@@ -49,7 +57,33 @@ if [[ -f "/opt/homebrew/bin/brew" ]] then
 fi
 
 
-eval "$(zoxide init --cmd cd zsh)"
+eval "$(zoxide init zsh)"
+eval "$(direnv hook zsh)"
+
+# Completion Options.
+setopt complete_in_word         # Complete From Both Ends Of A Word.
+setopt always_to_end            # Move Cursor To The End Of A Completed Word.
+setopt path_dirs                # Perform Path Search Even On Command Names With Slashes.
+setopt auto_menu                # Show Completion Menu On A Successive Tab Press.
+setopt auto_list                # Automatically List Choices On Ambiguous Completion.
+setopt auto_param_slash         # If Completed Parameter Is A Directory, Add A Trailing Slash.
+setopt no_complete_aliases
+
+setopt menu_complete            # Do Not Autoselect The First Completion Entry.
+unsetopt flow_control           # Disable Start/Stop Characters In Shell Editor.
+
+# Zstyle.
+zstyle ':completion:*:*:*:*:*' menu select
+zstyle ':completion:*:matches' group 'yes'
+zstyle ':completion:*' group-name ''
+zstyle ':completion::complete:*' use-cache on
+zstyle ':completion::complete:*' cache-path "$HOME/.zcompcache"
+zstyle ':completion:*' list-colors $LS_COLORS
+zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#) ([0-9a-z-]#)*=01;34=0=01'
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
+zstyle ':completion:*:functions' ignored-patterns '(_*|pre(cmd|exec))'
+zstyle ':completion:*' rehash true
+zstyle ':completion:*' special-dirs true
 
  # History
 HIST_STAMPS="yyyy/mm/dd"
@@ -57,20 +91,26 @@ HISTSIZE=5000
 HISTFILE=~/.zsh_history
 SAVEHIST=$HISTSIZE
 HISTDUP=erase
-setopt prompt_subst
 setopt appendhistory
+setopt bang_hist                # Treat The '!' Character Specially During Expansion.
+setopt extended_history         # Show Timestamp In History.
+setopt hist_expire_dups_first   # Expire A Duplicate Event First When Trimming History.
+setopt hist_find_no_dups        # Do Not Display A Previously Found Event.
+setopt hist_ignore_all_dups     # Delete An Old Recorded Event If A New Event Is A Duplicate.
+setopt hist_ignore_dups         # Do Not Record An Event That Was Just Recorded Again.
+setopt hist_ignore_space        # Do Not Record An Event Starting With A Space.
+setopt hist_save_no_dups        # Do Not Write A Duplicate Event To The History File.
+setopt hist_verify              # Do Not Execute Immediately Upon History Expansion.
+setopt inc_append_history       # Write To The History File Immediately, Not When The Shell Exits.
+setopt prompt_subst
+setopt share_history            # Share History Between All Sessions.
 setopt sharehistory
-setopt hist_ignore_space
-setopt hist_ignore_all_dups
-setopt hist_save_no_dups
-setopt hist_ignore_dups
-setopt hist_find_no_dups
 
 # to make cd also see .hidden directories/files
 setopt globdots
 
 function powerline_precmd() {
-  PS1="$($GOPATH/bin/powerline-go -error $? -shell zsh -newline -jobs ${${(%):%j}:-0} -modules kube,cwd,git,jobs,exit)"
+  PS1="$($GOPATH/bin/powerline-go -shorten-eks-names -shorten-gke-names -numeric-exit-codes -cwd-mode fancy -git-mode fancy -error $? -shell zsh -newline -jobs ${${(%):%j}:-0} -modules kube,cwd,git,jobs,exit)"
 }
 
 
@@ -91,3 +131,7 @@ export FZF_CTRL_T_OPTS="
   --walker-skip .git,node_modules,target
   --preview 'bat -n --color=always {}'
   --bind 'ctrl-/:change-preview-window(down|hidden|)'"
+
+# export ZELLIJ_AUTO_ATTACH=true
+# export ZELLIJ_AUTO_EXIT=true
+# eval "$(zellij setup --generate-auto-start zsh)"

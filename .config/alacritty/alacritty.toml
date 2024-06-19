@@ -148,16 +148,18 @@ save_to_clipboard = true
 semantic_escape_chars = ",│`|:\"' ()[]{}<>\t"
 
 [window]
-decorations = "None"
-dynamic_padding = false
-dynamic_title = true
-opacity = 1.0
-startup_mode = "FullScreen"
+decorations = "Buttonless"
+dynamic_padding = true
+dynamic_title = false
+opacity = 0.95
+blur = true
+startup_mode = "Maximized"
+# option_as_alt = "Both"
 
 [window.dimensions]
 columns = 160
 lines = 48
 
 [window.padding]
-x = 2
-y = 2
+x = 5
+y = 5
