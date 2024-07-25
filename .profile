@@ -7,13 +7,11 @@ export PATH=$PATH:/snap/bin
 export PATH=$PATH:$HOME/.node_modules/bin
 export PATH=$PATH:/home/linuxbrew/.linuxbrew/bin
 #export PATH=$PATH:`stack path`
-export HOMESHICK_DIR=$HOME/.homesick/repos/homeshick
 export PATH=$PATH:/Applications/GoLand.app/Contents/MacOS
 export PATH="/opt/homebrew/opt/postgresql@16/bin:$PATH"
 #export FZF_DEFAULT_COMMAND='ag --hidden --ignore .git -g ""'
 #export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 #eval `ssh-agent`
-
 
 export EDITOR=nvim
 alias takeover="tmux detach -a"
@@ -32,8 +30,6 @@ alias c='clear'
 alias lg='lazygit'
 alias lzd='lazydocker'
 alias dsp='docker system prune -a --group-directories-first'
-
-source "$HOMESHICK_DIR/homeshick.sh"
 
 # Go settings
 export GOPATH="${HOME}/go"

@@ -29,6 +29,10 @@ zinit light zsh-users/zsh-completions
 #         ZSH_TMUX_AUTOCONNECT=true;"
 # zinit snippet OMZP::tmux
 
+zinit snippet OMZ::lib/compfix.zsh
+zinit snippet OMZ::lib/completion.zsh
+zinit snippet OMZ::lib/git.zsh
+zinit snippet OMZ::plugins/git/git.plugin.zsh
 zinit snippet OMZP::common-aliases
 zinit snippet OMZP::command-not-found
 zinit snippet OMZP::copyfile
@@ -38,6 +42,7 @@ zinit snippet OMZP::kubectl
 zinit snippet OMZP::sudo
 zinit snippet OMZP::vscode
 zinit snippet OMZP::brew
+
 zinit lucid for \
     atinit"
         export ZSH_TMUX_FIXTERM=false
@@ -105,6 +110,7 @@ setopt inc_append_history       # Write To The History File Immediately, Not Whe
 setopt prompt_subst
 setopt share_history            # Share History Between All Sessions.
 setopt sharehistory
+setopt autocd
 
 # to make cd also see .hidden directories/files
 setopt globdots
