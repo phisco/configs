@@ -24,3 +24,4 @@ _darcs
 
 # Personal
 .*\.bak
+.DS_Store

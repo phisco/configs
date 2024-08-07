@@ -1,0 +1,68 @@
+format = """
+[░▒▓](#a3aed2)\
+$kubernetes\
+[](bg:#769ff0 fg:#a3aed2)\
+$directory\
+[](fg:#769ff0 bg:#394260)\
+$git_branch\
+$git_status\
+$git_state\
+[](fg:#394260 bg:#1d2230)\
+$time\
+[ ](fg:#1d2230)\
+$status\
+$cmd_duration\
+\n$character"""
+
+[directory]
+style = "fg:black bg:#769ff0"
+format = "[ $path ]($style)"
+truncation_length = 2
+truncation_symbol = "…/"
+
+[directory.substitutions]
+"Documents" = "󰈙 "
+"Downloads" = " "
+"Music" = " "
+"Pictures" = " "
+
+[git_branch]
+symbol = ""
+style = "bg:#394260"
+format = '[[ $symbol $branch ](fg:#769ff0 bg:#394260)]($style)'
+
+[git_status]
+style = "bg:#394260"
+format = '[[($all_status )](fg:#769ff0 bg:#394260)]($style)'
+conflicted = '🏳${count} '
+ahead = '🏎💨${count} '
+behind = '😰${count} '
+diverged = '😵${ahead_count} 😱${behind_count} '
+up_to_date = '✓${count} '
+untracked = '🤷${count} '
+stashed = '📦${count} '
+modified = '📝${count} '
+staged = '🚀${count} '
+
+[git_state]
+style = "bg:#394260"
+format = '[\($state( $progress_current/$progress_total)\) ]($style)'
+
+[time]
+disabled = false
+time_format = "%R" # Hour:Minute Format
+style = "bg:#1d2230"
+format = '[[  $time ](fg:#a0a9cb bg:#1d2230)]($style)'
+
+[status]
+format = '[$symbol $status]($style) '
+disabled = false
+
+[kubernetes]
+disabled = false
+style = "bg:#a3aed2 fg:#1d2230"
+format = '[ $symbol$context ]($style)'
+
+[[kubernetes.contexts]]
+context_pattern = "gke_.*_(?P<cluster>[\\w-]+)"
+context_alias = "gke-$cluster"

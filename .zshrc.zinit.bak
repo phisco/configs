@@ -4,6 +4,7 @@ autoload -U edit-command-line
 zle -N edit-command-line
 bindkey -M vicmd v edit-command-line
 bindkey "^?" backward-delete-char # Fix the back delete issue: https://github.com/spaceship-prompt/spaceship-prompt/issues/91#issuecomment-327996599
+bindkey "^X" clear-screen
 export PATH="$PATH:/Users/phisco/.local/bin"
 
 ### Added by Zinit's installer
@@ -19,15 +20,15 @@ source "$HOME/.local/share/zinit/zinit.git/zinit.zsh"
 autoload -Uz _zinit
 (( ${+_comps} )) && _comps[zinit]=_zinit
 
-# zinit light zsh-users/zsh-syntax-highlighting
+zinit light zsh-users/zsh-syntax-highlighting
 zinit light zsh-users/zsh-completions
 # zinit light zsh-users/zsh-autosuggestions
 #
-# zinit ice atinit"
-#         ZSH_TMUX_FIXTERM=true;
-#         ZSH_TMUX_AUTOSTART=true;
-#         ZSH_TMUX_AUTOCONNECT=true;"
-# zinit snippet OMZP::tmux
+zinit ice atinit"
+        ZSH_TMUX_FIXTERM=true;
+        ZSH_TMUX_AUTOSTART=true;
+        ZSH_TMUX_AUTOCONNECT=true;"
+zinit snippet OMZP::tmux
 
 zinit snippet OMZ::lib/compfix.zsh
 zinit snippet OMZ::lib/completion.zsh
@@ -52,7 +53,7 @@ zinit lucid for \
     " \
     OMZP::tmux \
     atinit"HIST_STAMPS=dd.mm.yyyy" \
-    OMZL::history.zsh \
+    OMZL::history.zsh
 
 autoload -Uz compinit && compinit
 zinit cdreplay -q
@@ -115,21 +116,22 @@ setopt autocd
 # to make cd also see .hidden directories/files
 setopt globdots
 
-function powerline_precmd() {
-  PS1="$($GOPATH/bin/powerline-go -shorten-eks-names -shorten-gke-names -numeric-exit-codes -cwd-mode fancy -git-mode fancy -error $? -shell zsh -newline -jobs ${${(%):%j}:-0} -modules kube,cwd,git,jobs,exit)"
-}
-
-
-function install_powerline_precmd() {
-  for s in "${precmd_functions[@]}"; do
-    if [ "$s" = "powerline_precmd" ]; then
-      return
-    fi
-  done
-  precmd_functions+=(powerline_precmd)
-}
-
-install_powerline_precmd
+eval "$(starship init zsh)"
+# function powerline_precmd() {
+#   PS1="$($GOPATH/bin/powerline-go -shorten-eks-names -shorten-gke-names -numeric-exit-codes -cwd-mode fancy -git-mode fancy -error $? -shell zsh -newline -jobs ${${(%):%j}:-0} -modules kube,cwd,git,jobs,exit)"
+# }
+#
+#
+# function install_powerline_precmd() {
+#   for s in "${precmd_functions[@]}"; do
+#     if [ "$s" = "powerline_precmd" ]; then
+#       return
+#     fi
+#   done
+#   precmd_functions+=(powerline_precmd)
+# }
+#
+# install_powerline_precmd
 
 [[ ! -f ~/.fzf.zsh ]] || source ~/.fzf.zsh
 
