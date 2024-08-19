@@ -24,11 +24,11 @@ zinit light zsh-users/zsh-syntax-highlighting
 zinit light zsh-users/zsh-completions
 # zinit light zsh-users/zsh-autosuggestions
 #
-zinit ice atinit"
-        ZSH_TMUX_FIXTERM=true;
-        ZSH_TMUX_AUTOSTART=true;
-        ZSH_TMUX_AUTOCONNECT=true;"
-zinit snippet OMZP::tmux
+# zinit ice atinit"
+#         ZSH_TMUX_FIXTERM=true;
+#         ZSH_TMUX_AUTOSTART=true;
+#         ZSH_TMUX_AUTOCONNECT=true;"
+# zinit snippet OMZP::tmux
 
 zinit snippet OMZ::lib/compfix.zsh
 zinit snippet OMZ::lib/completion.zsh
