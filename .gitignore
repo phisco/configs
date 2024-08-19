@@ -4,3 +4,4 @@
 .idea/
 go.work*
 phisco_scratchpad
+.worktree/
