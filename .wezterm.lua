@@ -11,7 +11,10 @@ local config = wezterm.config_builder()
 -- config.color_scheme = 'OneHalfDark'
 config.color_scheme = 'Dracula'
 config.hide_tab_bar_if_only_one_tab = true
-config.font = wezterm.font('JetBrainsMono Nerd Font', { weight = 'Bold', italic = false })
+config.font = wezterm.font_with_fallback(
+  { family = 'JetBrainsMono Nerd Font', weight = 'Bold', italic = false },
+  'Noto Color Emoji'
+)
 
 config.window_background_opacity = 0.9
 config.macos_window_background_blur = 30
