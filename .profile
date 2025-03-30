@@ -21,6 +21,8 @@ export npm_config_prefix=$HOME/.node_modules
 
 alias sudo="sudo "
 alias wa="watch -n 1 -d "
+alias vas='viddy -n 1s -d -p '
+alias va='vas --disable_auto_save '
 alias v="nvim"
 alias vimdiff="nvim -d"
 alias vim="nvim"
@@ -59,3 +61,4 @@ export GPG_TTY=$(tty)
 
 alias "rm"="rm -i"
 
+. "$HOME/.cargo/env"

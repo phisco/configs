@@ -44,16 +44,19 @@ zinit snippet OMZP::sudo
 zinit snippet OMZP::vscode
 zinit snippet OMZP::brew
 
-zinit lucid for \
-    atinit"
-        export ZSH_TMUX_FIXTERM=false
-        export ZSH_TMUX_AUTOSTART=true
-        export ZSH_TMUX_AUTOCONNECT=true
-        export ZSH_TMUX_DEFAULT_SESSION_NAME='</>'
-    " \
-    OMZP::tmux \
-    atinit"HIST_STAMPS=dd.mm.yyyy" \
-    OMZL::history.zsh
+# if tmux_disabled is true, don't attach
+if [[ "$TMUX_DISABLED" != "true" ]]; then
+  zinit lucid for \
+      atinit"
+          export ZSH_TMUX_FIXTERM=false
+          export ZSH_TMUX_AUTOSTART=true
+          export ZSH_TMUX_AUTOCONNECT=true
+          export ZSH_TMUX_DEFAULT_SESSION_NAME='</>'
+      " \
+      OMZP::tmux \
+      atinit"HIST_STAMPS=dd.mm.yyyy" \
+      OMZL::history.zsh
+fi
 
 autoload -Uz compinit && compinit
 zinit cdreplay -q

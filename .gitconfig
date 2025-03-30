@@ -2,26 +2,58 @@
 	email = p.scorsolini@gmail.com
 	name = Philippe Scorsolini
 	signingKey = 58CAEA8F1CC8503E
+
 [alias]
 	logtree = log --graph --all --oneline
 	staash = stash --all
+
 [push]
-	autoSetupRemote = true
+    default = simple
+    autoSetupRemote = true
+    followTags = true
+
 [core]
 	excludesfile = /Users/phisco/.gitignore
+
 [url "ssh://git@github.com/"]
 	insteadOf = https://github.com/
-[rerere]
-	enabled = true
+
 [column]
 	ui = auto
+
 [branch]
 	sort = -committerdate
+
 [init]
 	defaultBranch = main
+
 [difftool]
     prompt = true
+
 [diff]
     tool = nvimdiff
+    algorithm = histogram
+    colorMoved = plain
+    mnemonicPrefix = true
+    renames = true
+    
 [difftool "nvimdiff"]
     cmd = "nvim -d \"$LOCAL\" \"$REMOTE\""
+
+[fetch]
+    prune = true
+
+[help]
+    autocorrect = prompt
+
+[commit]
+    verbose = true
+
+[rerere]
+    enabled = true
+    autoupdate = true
+
+[rebase]
+    autoSquash = true
+    autoStash = true
+    updateRefs = true
