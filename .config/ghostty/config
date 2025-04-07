@@ -3,3 +3,4 @@ minimum-contrast = 1
 background-opacity = 0.9
 background-blur-radius = 15
 macos-titlebar-style = hidden
+cursor-style = block
