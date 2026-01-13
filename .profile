@@ -1,14 +1,5 @@
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
-export PATH=$HOME/.local/bin:$HOME/go/bin:$PATH
-export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
-export PATH=$PATH:/snap/bin
-#export PATH=$PATH:`gem environment gempath`
-export PATH=$PATH:$HOME/.node_modules/bin
-export PATH=$PATH:/home/linuxbrew/.linuxbrew/bin
-#export PATH=$PATH:`stack path`
-export PATH=$PATH:/Applications/GoLand.app/Contents/MacOS
-export PATH="/opt/homebrew/opt/postgresql@16/bin:$PATH"
 #export FZF_DEFAULT_COMMAND='ag --hidden --ignore .git -g ""'
 #export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 #eval `ssh-agent`
@@ -33,9 +24,17 @@ alias lg='lazygit'
 alias lzd='lazydocker'
 alias dsp='docker system prune -a --group-directories-first'
 
+export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 # Go settings
 export GOPATH="${HOME}/go"
+export PATH=$HOME/.local/bin:$HOME/go/bin:$PATH
 # Homebrew settings
+export PATH=$PATH:$HOME/.node_modules/bin
+if [[ -f "/opt/homebrew/bin/brew" ]]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
+export PATH=$PATH:/Applications/GoLand.app/Contents/MacOS
+export PATH="/opt/homebrew/opt/postgresql@16/bin:$PATH"
 export PATH="/opt/homebrew/opt/gettext/bin:$PATH"
 export PATH="/opt/homebrew/opt/coreutils/libexec/gnubin:$PATH"
 export PATH="/opt/homebrew/opt/findutils/libexec/gnubin:$PATH"
@@ -57,8 +56,12 @@ export PKG_CONFIG_PATH="/opt/homebrew/opt/readline/lib/pkgconfig"
 
 # GPGv2 backward compatibility
 export GPG_AGENT_INFO=~/.gnupg/S.gpg-agent::1
-export GPG_TTY=$(tty)
+if gpg_tty=$(tty); then
+  export GPG_TTY=$gpg_tty
+fi
 
 alias "rm"="rm -i"
 
 . "$HOME/.cargo/env"
+
+export GOPRIVATE=github.com/phisco/up-sdk-go,github.com/phisco/up-sdk-go/apis,github.com/upbound/up-sdk-go,github.com/upbound/up-sdk-go/apis,github.com/upbound/uxp-licensing,github.com/upbound/controller-manager,github.com/upbound/upbound-runtime,
