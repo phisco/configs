@@ -9,3 +9,4 @@ cursor-style = block
 env = TMUX_ENABLED=true
 
 shell-integration-features=true
+bell-features=system

@@ -7,7 +7,7 @@ return {
         panel = { enabled = false },
         filetypes = {
           ["*"] = true,
-          ["markdown"] = false,
+          ["markdown"] = true,
         }
       })
     end
