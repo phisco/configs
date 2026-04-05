@@ -62,6 +62,6 @@ fi
 
 alias "rm"="rm -i"
 
-. "$HOME/.cargo/env"
+[ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
 
 export GOPRIVATE=github.com/phisco/up-sdk-go,github.com/phisco/up-sdk-go/apis,github.com/upbound/up-sdk-go,github.com/upbound/up-sdk-go/apis,github.com/upbound/uxp-licensing,github.com/upbound/controller-manager,github.com/upbound/upbound-runtime,
