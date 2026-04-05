@@ -1,5 +1,5 @@
 [user]
-	email = p.scorsolini@gmail.com
+	email = 5697904+phisco@users.noreply.github.com
 	name = Philippe Scorsolini
 	signingKey = 58CAEA8F1CC8503E
 
@@ -36,6 +36,7 @@
     colorMoved = plain
     mnemonicPrefix = true
     renames = true
+	submodule = diff
     
 [difftool "nvimdiff"]
     cmd = "nvim -d \"$LOCAL\" \"$REMOTE\""
@@ -57,3 +58,5 @@
     autoSquash = true
     autoStash = true
     updateRefs = true
+[status]
+	submoduleSummary = 1

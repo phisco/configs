@@ -1,4 +1,6 @@
-[[ ! -f ~/.profile ]] || source ~/.profile
+if [[ -o login && -f ~/.profile ]]; then
+  source ~/.profile
+fi
 
 autoload -U edit-command-line
 zle -N edit-command-line
@@ -19,7 +21,6 @@ source "$HOME/.local/share/zinit/zinit.git/zinit.zsh"
 autoload -Uz _zinit
 (( ${+_comps} )) && _comps[zinit]=_zinit
 
-zinit light zsh-users/zsh-syntax-highlighting
 zinit light zsh-users/zsh-completions
 zinit light nix-community/nix-zsh-completions
 # zinit light zsh-users/zsh-autosuggestions
@@ -33,7 +34,6 @@ zinit light nix-community/nix-zsh-completions
 zinit snippet OMZ::lib/compfix.zsh
 zinit snippet OMZ::lib/completion.zsh
 zinit snippet OMZ::lib/git.zsh
-zinit snippet OMZ::plugins/git/git.plugin.zsh
 zinit snippet OMZP::common-aliases
 zinit snippet OMZP::command-not-found
 zinit snippet OMZP::copyfile
@@ -44,22 +44,167 @@ zinit snippet OMZP::sudo
 zinit snippet OMZP::vscode
 zinit snippet OMZP::brew
 
-# if tmux_disabled is true, don't attach
-if [[ "$TMUX_ENABLED" == "true" ]]; then
-  zinit lucid for \
-      atinit"
-          export ZSH_TMUX_FIXTERM=false
-          export ZSH_TMUX_AUTOSTART=true
-          export ZSH_TMUX_AUTOCONNECT=true
-          export ZSH_TMUX_DEFAULT_SESSION_NAME='</>'
-      " \
-      OMZP::tmux \
-      atinit"HIST_STAMPS=dd.mm.yyyy" \
-      OMZL::history.zsh
+# Tmux integration.
+# SSH clients usually can't pass arbitrary env vars unless sshd AcceptEnv permits them.
+IS_SSH_SESSION=false
+if [[ -n "$SSH_TTY" || -n "$SSH_CONNECTION" ]]; then
+  IS_SSH_SESSION=true
 fi
 
-autoload -Uz compinit && compinit
-zinit cdreplay -q
+# Auto-enable tmux integration for SSH logins so TMUX_ENABLED from the client isn't required.
+if [[ "$IS_SSH_SESSION" == "true" && -z "$TMUX_ENABLED" ]]; then
+  TMUX_ENABLED=true
+fi
+
+# Target tmux session name.
+# Priority:
+# 1) TMUX_SESSION_NAME from environment (if forwarded by SSH)
+# 2) ~/.config/tmux/session-name (single-line value)
+# 3) TMUX_SESSION_NAME_DEFAULT
+TMUX_SESSION_NAME_DEFAULT="${TMUX_SESSION_NAME_DEFAULT:-</>}"
+TMUX_SSH_SESSION_NAME_DEFAULT="${TMUX_SSH_SESSION_NAME_DEFAULT:-phone}"
+if [[ "$IS_SSH_SESSION" == "true" ]]; then
+  TMUX_SESSION_NAME_DEFAULT="$TMUX_SSH_SESSION_NAME_DEFAULT"
+fi
+TMUX_SESSION_NAME_FILE="${XDG_CONFIG_HOME:-$HOME/.config}/tmux/session-name"
+if [[ "$IS_SSH_SESSION" == "true" && -z "$TMUX_SESSION_NAME" && -r "$TMUX_SESSION_NAME_FILE" ]]; then
+  TMUX_SESSION_NAME="$(<"$TMUX_SESSION_NAME_FILE")"
+fi
+TMUX_SESSION_NAME="${TMUX_SESSION_NAME:-$TMUX_SESSION_NAME_DEFAULT}"
+
+TMUX_BIN="${commands[tmux]}"
+
+if [[ "$TMUX_ENABLED" == "true" || "$TMUX_ENABLED" == "1" ]]; then
+  export ZSH_TMUX_FIXTERM=false
+  if [[ "$IS_SSH_SESSION" == "true" ]]; then
+    export ZSH_TMUX_AUTOSTART=false
+  else
+    export ZSH_TMUX_AUTOSTART=true
+  fi
+  export ZSH_TMUX_AUTOCONNECT=true
+  export ZSH_TMUX_DEFAULT_SESSION_NAME="$TMUX_SESSION_NAME"
+
+  zinit snippet OMZP::tmux
+  zinit snippet OMZL::history.zsh
+fi
+
+# Fallback: force tmux attach for interactive SSH shells if plugin autostart didn't trigger.
+if [[ -o interactive && -z "$TMUX" && "$IS_SSH_SESSION" == "true" ]]; then
+  if [[ "$TMUX_ENABLED" == "true" || "$TMUX_ENABLED" == "1" ]]; then
+    if [[ -n "$TMUX_BIN" ]]; then
+      "$TMUX_BIN" new-session -A -s "$TMUX_SESSION_NAME"
+    fi
+  fi
+fi
+
+# Toggle between two tmux sessions on the same socket by default.
+# Defaults are:
+#   1) /private/tmp/tmux-$UID/default session "</>"
+#   2) /private/tmp/tmux-$UID/default session "phone"
+# You can override with:
+#   TMUX_FLIP_PRIMARY_SOCKET, TMUX_FLIP_PRIMARY_SESSION
+#   TMUX_FLIP_SECONDARY_SOCKET, TMUX_FLIP_SECONDARY_SESSION
+_tmux_flip_followup() {
+  [[ -n "$TMUX" ]] && return 0
+
+  local tmux_bin="${commands[tmux]}"
+  [[ -z "$tmux_bin" ]] && return 0
+
+  local state_dir="${XDG_STATE_HOME:-$HOME/.local/state}"
+  local pending_file="$state_dir/tmux-flip-pending"
+  [[ ! -r "$pending_file" ]] && return 0
+
+  local next_key
+  next_key="$(<"$pending_file")"
+  rm -f "$pending_file"
+  [[ -z "$next_key" ]] && return 0
+
+  local next_socket="${next_key%%|*}"
+  local next_session="${next_key#*|}"
+
+  if [[ ! -S "$next_socket" ]]; then
+    echo "tmux_flip: socket not found: $next_socket"
+    return 1
+  fi
+
+  if ! "$tmux_bin" -S "$next_socket" has-session -t "$next_session" 2>/dev/null; then
+    echo "tmux_flip: session '$next_session' not found on socket '$(basename "$next_socket")'"
+    return 1
+  fi
+
+  TMUX= "$tmux_bin" -S "$next_socket" attach -t "$next_session"
+}
+
+typeset -ga precmd_functions
+if (( ${precmd_functions[(I)_tmux_flip_followup]} == 0 )); then
+  precmd_functions+=_tmux_flip_followup
+fi
+
+tmux_flip() {
+  local tmux_bin="${commands[tmux]}"
+  if [[ -z "$tmux_bin" ]]; then
+    echo "tmux_flip: tmux not found in PATH"
+    return 1
+  fi
+
+  local socket_dir="${TMUX_SOCKET_DIR:-/private/tmp/tmux-${UID}}"
+  local default_socket="${TMUX_FLIP_SOCKET:-$socket_dir/default}"
+  local primary_socket="${TMUX_FLIP_PRIMARY_SOCKET:-$default_socket}"
+  local primary_session="${TMUX_FLIP_PRIMARY_SESSION:-</>}"
+  local secondary_socket="${TMUX_FLIP_SECONDARY_SOCKET:-$default_socket}"
+  local secondary_session="${TMUX_FLIP_SECONDARY_SESSION:-${TMUX_SSH_SESSION_NAME_DEFAULT:-phone}}"
+
+  local state_dir="${XDG_STATE_HOME:-$HOME/.local/state}"
+  local state_file="$state_dir/tmux-flip-last"
+  local pending_file="$state_dir/tmux-flip-pending"
+  mkdir -p "$state_dir" 2>/dev/null || true
+
+  local primary_key="${primary_socket}|${primary_session}"
+  local secondary_key="${secondary_socket}|${secondary_session}"
+  local current_key=""
+  local next_key="$primary_key"
+
+  if [[ -r "$state_file" ]]; then
+    current_key="$(<"$state_file")"
+  fi
+
+  if [[ "$current_key" == "$primary_key" ]]; then
+    next_key="$secondary_key"
+  elif [[ "$current_key" == "$secondary_key" ]]; then
+    next_key="$primary_key"
+  fi
+
+  local next_socket="${next_key%%|*}"
+  local next_session="${next_key#*|}"
+
+  if [[ ! -S "$next_socket" ]]; then
+    echo "tmux_flip: socket not found: $next_socket"
+    return 1
+  fi
+
+  if ! "$tmux_bin" -S "$next_socket" has-session -t "$next_session" 2>/dev/null; then
+    echo "tmux_flip: session '$next_session' not found on socket '$(basename "$next_socket")'"
+    return 1
+  fi
+
+  print -r -- "$next_key" >| "$state_file"
+
+  if [[ -n "$TMUX" ]]; then
+    print -r -- "$next_key" >| "$pending_file"
+    if ! "$tmux_bin" detach-client; then
+      rm -f "$pending_file"
+      echo "tmux_flip: failed to detach tmux client"
+      return 1
+    fi
+    return 0
+  fi
+
+  TMUX= "$tmux_bin" -S "$next_socket" attach -t "$next_session"
+}
+
+alias tmx='tmux_flip'
+
+zinit light zsh-users/zsh-syntax-highlighting
 
 
 eval "$(zoxide init zsh)"
@@ -109,7 +254,6 @@ setopt hist_verify              # Do Not Execute Immediately Upon History Expans
 setopt inc_append_history       # Write To The History File Immediately, Not When The Shell Exits.
 setopt prompt_subst
 setopt share_history            # Share History Between All Sessions.
-setopt sharehistory
 setopt autocd
 
 # to make cd also see .hidden directories/files
@@ -143,10 +287,73 @@ export FZF_CTRL_T_OPTS="
 # export ZELLIJ_AUTO_EXIT=true
 # eval "$(zellij setup --generate-auto-start zsh)"
 # The following lines have been added by Docker Desktop to enable Docker CLI completions.
-fpath=(/Users/phisco/.docker/completions $fpath)
-autoload -Uz compinit
-compinit
+fpath=("$HOME/.docker/completions" $fpath)
 # End of Docker CLI completions
 
+# Dotfiles management
+DOTFILES_DIR="$HOME/dotfiles"
+
+# Add a config file to the dotfiles repo
+# Usage: stow_add ~/.config/app/config.yaml
+stow_add() {
+  if [[ -z "$1" ]]; then
+    echo "Usage: stow_add <file-path>"
+    echo "Example: stow_add ~/.config/app/config.yaml"
+    return 1
+  fi
+
+  if ! command -v stow >/dev/null 2>&1; then
+    echo "Error: stow is not installed or not in PATH"
+    return 1
+  fi
+
+  local file="${1:A}"  # Get absolute path
+
+  # Check if file exists and is not a symlink
+  if [[ ! -e "$file" ]]; then
+    echo "Error: File does not exist: $file"
+    return 1
+  fi
+
+  if [[ -L "$file" ]]; then
+    echo "Error: File is already a symlink: $file"
+    return 1
+  fi
+
+  # Check if file is under $HOME
+  if [[ "$file" != "$HOME"/* ]]; then
+    echo "Error: File must be under \$HOME: $file"
+    return 1
+  fi
+
+  # Get relative path from $HOME
+  local relpath="${file#$HOME/}"
+  local dest="$DOTFILES_DIR/$relpath"
+  local destdir="$(dirname "$dest")"
+
+  # Create destination directory if needed
+  mkdir -p "$destdir"
+
+  # Move file to dotfiles repo
+  mv "$file" "$dest" || {
+    echo "Error: Failed to move $file -> $dest"
+    return 1
+  }
+  echo "Moved $file -> $dest"
+
+  # Re-run stow and rollback on failure
+  if ! (cd "$DOTFILES_DIR" && stow .); then
+    echo "Error: stow failed, rolling back move"
+    mv "$dest" "$file" || echo "Warning: rollback failed, manual recovery required"
+    return 1
+  fi
+  echo "Symlink created: $file -> $dest"
+}
+
 # Added by Antigravity
-export PATH="/Users/phisco/.antigravity/antigravity/bin:$PATH"
+export PATH="$HOME/.antigravity/antigravity/bin:$PATH"
+
+# Codex CLI completions
+fpath=("$HOME/.zfunc" $fpath)
+autoload -Uz compinit && compinit
+zinit cdreplay -q

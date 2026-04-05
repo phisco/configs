@@ -10,8 +10,6 @@ vim.opt.shiftwidth = 2
 vim.opt.expandtab = true
 vim.opt.autoindent = true
 
-vim.opt.smartindent = false
-
 vim.opt.wrap = true
 
 vim.opt.swapfile = false
@@ -35,7 +33,7 @@ vim.opt.colorcolumn = "120"
 vim.opt.visualbell = true
 
 vim.opt.foldmethod = "expr"
-vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
+vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
 vim.opt.foldlevel = 99
 vim.opt.foldlevelstart = 99
 vim.opt.foldnestmax = 4

@@ -1,0 +1,5 @@
+[mgr]
+prepend_keymap = [
+  { on = "<Enter>", run = "enter", desc = "Enter the child directory" },
+  { on = "-", run = "leave", desc = "Back to the parent directory" },
+]

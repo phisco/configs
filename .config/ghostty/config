@@ -10,3 +10,5 @@ env = TMUX_ENABLED=true
 
 shell-integration-features=true
 bell-features=system
+
+keybind = shift+enter=text:‰

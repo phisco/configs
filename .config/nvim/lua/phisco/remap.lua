@@ -1,8 +1,8 @@
 vim.g.mapleader = ","
 vim.keymap.set("n", "<leader>w", vim.cmd.w)
-vim.keymap.set("n", "<leader>W", ":wa <return>")
+vim.keymap.set("n", "<leader>W", "<cmd>wa<cr>")
 vim.keymap.set("n", "<leader>q", vim.cmd.q)
-vim.keymap.set("n", "<leader>Q", ":q! <return>")
+vim.keymap.set("n", "<leader>Q", "<cmd>q!<cr>")
 
 -- Copy and paste without yanking the text into the clipboard
 vim.keymap.set("x", "<leader>p", [["_dP]])

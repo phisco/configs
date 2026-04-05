@@ -4,7 +4,6 @@ return {
   dependencies = {
     'nvim-lua/plenary.nvim',
     'Myzel394/jsonfly.nvim',
-    'ThePrimeagen/harpoon',
   },
   config = function()
     require("telescope").setup({
@@ -53,10 +52,6 @@ return {
       vim.cmd('Telescope jsonfly')
     end)
 
-    require("telescope").load_extension('harpoon')
-    vim.keymap.set('n', '<leader>fa', function()
-      require('harpoon.ui').toggle_quick_menu()
-    end)
 
   end
 }
